@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artsy</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'login_reg.css' %}">
+
+</head>
+<div id="all">
+
+    <body>
+        <h1 id="welcome">Welcome to</h1>
+        <!-- <h1 id="artsy" style="font-family: URW Chancery L, cursive; color:grey; font-size: 60px;text-shadow: 2px 2px teal;">ARTSY!</h1> -->
+        <img src='/media/artsy/02.png' width="300" height="300" style="padding-left: 600px;">
+        <h2> Sign in to see our artists, or as an artist broadcast your masterpieces and sell them!</h2>
+        <div id='reg'>
+            <h3>Register</h3>
+
+            <form action='/processreg' method='POST'>
+                {% csrf_token %}
+
+                {% for err in messages %}
+                <p style="color: red;">{{ err }}</p>
+                {% endfor %}
+
+                <label>First Name:</label>
+                <input type='text' name='first_name'><br>
+
+                <label>Last Name:</label>
+                <input type='text' name='last_name'><br>
+
+                <label>User Type:</label>
+                <br>
+                <input type="radio" name="usertype" value="Viewer/Buyer">
+                <label for="Viewer/Buyer">Viewer/Buyer</label><br>
+                <input type="radio" name="usertype" value="Viewer/Seller">
+                <label for="Viewer/Seller">Viewer/Seller</label><br>
+
+                <label id="aboutyoutop">Tell us a little about yourself:</label>
+                <br>
+                <textarea id="aboutyoubot" name='aboutyou' cols="60" rows="5"></textarea>
+                <br>
+
+
+                <label>Email:</label>
+                <input type='text' name='email'><br>
+
+
+                <label>Password:</label>
+                <input type='password' name='password'><br>
+
+                <label>Confirm PW:</label>
+                <input type='password' name='pw_confirm'><br>
+
+                <button>Register</button><br>
+
+            </form>
+        </div>
+
+        <div id='log'>
+            <h3>Login</h3>
+
+            <form action='/processlogin' method='POST'>
+                {% csrf_token %}
+
+                <label>Email</label>
+                <input type='text' name='email'><br>
+
+                <label>Password</label>
+                <input type='password' name='password'><br>
+
+                <button>Login</button><br>
+            </form>
+        </div>
+    </body>
+    <footer>
+        <a>About Us</a> | <a>Contact Us</a> | <a>Careers</a> | <a>Get Featured</a>
+    </footer>
+</div>
+
+</html>

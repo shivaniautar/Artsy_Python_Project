@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Artists</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'dashboard.css' %}">
+</head>
+
+<div id='all'>
+<body>
+        <div id="top">
+            <img src='/media/artsy/02.png' width="200" height="200" style="padding-left: 200px;padding-top: 50px;">
+            <img src='media/profile_image/{{ user.image }}' width="100" height="100" id="profile_picture"
+                style="border: 15px solid grey; border-radius: 10px; margin-left: 190px; margin-top: 60px;">
+            <h1 id="he" style="padding-left: 50px; padding-bottom: 10px;margin-bottom: 10px;">Hello {{user.first_name}}!
+            </h1>
+        </div>
+        <br>
+        <div id="top-panel">
+            <a href="/dashboard">Meet our Artists</a> | <a href="editmyprofile">Edit Your Profile</a> | <a
+                href="/logout">Logout</a> | <a href="yourcart">Your Cart</a> | <a href="history"> Your Previous
+                Orders</a>
+
+
+                {% if user.usertype == "Viewer/Seller" %}
+                | <a href='/new_masterpiece'>New Masterpiece!</a>
+                    {% endif %}
+
+
+        </div>
+        <br>
+
+        <h2 style="text-align: center;">All Artists</h2>
+        <div id="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="font-size: x-large;"> Picture </th>
+                        <th style="font-size: x-large;"> Artists </th>
+                        <th style="font-size: x-large;"> Descriptions </th>
+                        <th style="font-size: x-large;"> Actions </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for artist in artists.all %}
+                    <tr>
+                        <td style="margin:0px; padding: 0px; text-align: center;"><img src='media/profile_image/{{artist.image}}' width="200" height="200" style="border: 7px solid #555;"></td>
+                        <td style="text-align: center;padding: 4px; font-size: x-large;"> {{ artist.first_name }} {{artist.last_name}}</td>
+                        <td style="text-align: center; padding: 4px;"> {{ artist.aboutyou }}</td>
+                        <td style="text-align: center; padding: 4px;"><a href="/viewartist/{{artist.id}}/anditems">View the Artist and their Masterpieces!</a>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <br>
+
+</body>
+<footer>
+    <a>About Us</a> | <a>Contact Us</a> | <a>Careers</a> | <a>Get Featured</a>
+</footer>
+</div>
+
+</html>

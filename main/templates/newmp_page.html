@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Masterpiece!</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'newmp_page.css' %}">
+
+</head>
+<div id="all">
+
+    <body>
+        <div id="top">
+            <a href="/dashboard">
+            <img src='/media/artsy/02.png' width="200" height="200" style="padding-left: 200px;padding-top: 50px;"></a>
+            <img src='media/profile_image/{{user.image}}' width="100" height="100" id="profile_picture"
+                style="border: 15px solid grey; border-radius: 10px; margin-left: 190px; margin-top: 60px;">
+            <h1 id="he" style="padding-left: 50px; padding-bottom: 10px;margin-bottom: 10px;">Hello {{user.first_name}}!
+            </h1>
+        </div>
+        <br>
+        <div id="top-panel">
+            <a href="/dashboard">Meet our Artists</a> | <a href="editmyprofile">Edit Your Profile</a> | <a
+                href="/logout">Logout</a> | <a href="yourcart">Your Cart</a> | <a href="history"> Your Previous
+                Orders</a>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <form action='newmp' method="POST" id="form">
+            {% csrf_token %}
+            <div id="container">
+
+                {% for err in messages %}
+                <p style="color: red;">{{ err }}</p>
+                {% endfor %}
+
+                <label> New Masterpiece Title:</label>
+                <br>
+                <br>
+                <input type='text' name='title'>
+                <br>
+                <br>
+
+                <label> New Masterpiece Description:</label>
+                <br>
+                <br>
+                <textarea name='description' cols="60" rows="5"></textarea>
+                <br>
+                <br>
+
+                <label> New Masterpiece Price:</label>
+                <br>
+                <br>
+                <input type='int' name='price'>
+                <br>
+                <br>
+                <button>Submit</button>
+            </div>
+        </form>
+        <br>
+        <br>
+
+
+
+    </body>
+    <footer>
+        <a>About Us</a> | <a>Contact Us</a> | <a>Careers</a> | <a>Get Featured</a>
+    </footer>
+</div>
+
+</html>

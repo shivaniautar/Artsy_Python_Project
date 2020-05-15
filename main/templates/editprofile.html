@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit My Profile</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'editprofile.css' %}">
+</head>
+
+<body>
+    <div id='all'>
+        <div id="top">
+            <a href="/dashboard">
+            <img src='/media/artsy/02.png' width="200" height="200" style="padding-left: 200px;padding-top: 50px;"></a>
+            <img src='/media/profile_image/{{user.image}}' width="100" height="100" id="profile_picture"
+                style="border: 15px solid grey; border-radius: 10px; margin-left: 190px; margin-top: 60px;">
+            <h1 id="he" style="padding-left: 50px; padding-bottom: 10px;margin-bottom: 10px;">Hello {{user.first_name}}!
+            </h1>
+        </div>
+        <br>
+        <div id="top-panel">
+            <a href="/dashboard">Meet our Artists/ Home Page</a> | <a href="/logout">Logout</a> | <a
+                href="yourcart">Your Cart</a> | <a href="history"> Your Previous Orders</a>
+
+                {% if user.usertype == "Viewer/Seller" %}
+                | <a href='/new_masterpiece'>New Masterpiece!</a>
+                    {% endif %}
+                <br>
+                <br>
+                <h2>Lets update your profile information!</h2>
+        </div>
+
+        <br>
+        <div id='top_form'>
+            <form action='updateprofile' method='POST'>
+                {% csrf_token %}
+                {% for err in messages %}
+                <p style="color: red;">{{ err }}</p>
+                {% endfor %}
+
+                <label>You are currently a {{ user.usertype }}!</label><br>
+                <br>
+                <label>You can update user type by chosing one of the below:</label>
+                <br>
+                <input type="radio"  name="usertype" value="Viewer/Buyer">
+                <label for="Viewer/Buyer">Viewer/Buyer</label><br>
+                <input type="radio"  name="usertype" value="Viewer/Seller">
+                <label for="Viewer/Seller">Viewer/Seller</label><br>
+                <br>
+            
+                <label id="aboutyoutop">Want to update us about yourself:</label><br>
+                <textarea id="aboutyoubot" name='aboutyou' cols="60" rows="5" value="{{ user.aboutyou }}">{{ user.aboutyou }}</textarea>
+                <br>
+                <button>Update My Information</button>
+            </form>
+        </div>
+
+        <br>
+        <br>
+
+        <div id='bottom_form'>
+            <form enctype="multipart/form-data" method="POST" action="/upload/profileimg">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="file" value="Upload" name="profile_image">
+                <button>Upload</button>
+                <p>Once you click upload, your profile picture will change!</p>
+            </form>
+        </div>
+
+</body>
+<footer>
+    <a>About Us</a> | <a>Contact Us</a> | <a>Careers</a> | <a>Get Featured</a>
+</footer>
+</div>
+
+</html>
