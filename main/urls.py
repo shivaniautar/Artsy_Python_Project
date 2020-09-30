@@ -24,5 +24,8 @@ urlpatterns = [
     path('updateitem/<int:item_id>', views.process_update_item),
     path('upload/item_pic/<int:item_id>/after_view', views.process_update_masterpiece_pic),
     path('viewmasterpiece/<int:item_id>', views.see_viewmasterpiece_page),
-    path('delete/<int:item_id>', views.process_delete)
+    path('delete/<int:item_id>', views.process_delete),
+    path('cart', views.cart),
+    path('add_to_cart/<int:item_id>', views.add_to_cart),
+    path('remove_from_cart/<int:item_id>', views.remove_from_cart),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

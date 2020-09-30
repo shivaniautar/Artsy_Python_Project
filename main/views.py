@@ -49,6 +49,9 @@ def login(request):
     return redirect('/')
 
 def dashboard_page(request):
+    if 'cart_id' not in request.session:
+        cart = Cart.objects.create(total=0)
+        request.session['cart_id']=cart.id
     if "user_id" not in request.session:
         messages.error(request, "You must be logged in to view that page.")
         return redirect('/')
@@ -206,3 +209,38 @@ def process_delete(request, item_id):
 
 def start(request):
     return render(request,'start.html')
+
+def cart(request):
+    if 'cart_id' not in request.session:
+        cart = Cart.objects.create(total=0)
+        request.session['cart_id']=cart.id
+    context = {
+        'cart': Cart.objects.get(id=request.session['cart_id']),
+        "user":User.objects.get(id = request.session['user_id']),
+    }
+    return render(request, 'cart.html', context)
+
+def refresh_cart_total(cart):
+    total = 0
+    for item in cart.cart_items.all():
+        total+= item.item.price
+    cart.total = total
+    cart.save()
+
+def remove_from_cart(request, item_id):
+    item = Item.objects.get(id=item_id)
+    cart = Cart.objects.get(id=request.session['cart_id'])
+    cart_item = CartItem.objects.create(item=item, cart=cart)
+
+    refresh_cart_total(cart)
+
+    return redirect('/cart')
+
+def add_to_cart(request, item_id):
+    item = Item.objects.get(id=item_id)
+    cart = Cart.objects.get(id=request.session['cart_id'])
+    cart_item = CartItem.objects.create(item=item, cart=cart)
+
+    refresh_cart_total(cart)
+
+    return redirect('/cart')

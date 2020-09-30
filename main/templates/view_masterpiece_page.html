@@ -47,7 +47,7 @@
             <br>
             <h6>Item was posted on: {{ item.date_created }}</h6>
             <br>
-            {% if user.id != item.creator.id %}<a href=''>Buy</a> {% endif %}
+            {% if user.id != item.creator.id %}<a href='/add_to_cart/{{item.id}}'>Buy</a> {% endif %}
             {% if user.id == item.creator.id %}
             <a href="/edit/{{item.id}}">Edit Item</a> | <a href="/delete/{{item.id}}">Delete Item</a>
             {% endif %}
