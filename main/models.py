@@ -36,6 +36,16 @@ class ItemManager(models.Manager):
 
         return errors
 
+class Address(models.Model):
+    address = models.CharField(max_length=45)
+    address2 = models.CharField(max_length=45)
+    city = models.CharField(max_length=45)
+    state = models.CharField(max_length=2)
+    zipcode = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+
 class User(models.Model):
     first_name = models.CharField(max_length = 45)
     last_name = models.CharField(max_length = 45)
@@ -46,6 +56,7 @@ class User(models.Model):
     image = models.ImageField(upload_to='profile_image', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    address = models.ForeignKey(Address, related_name="user",null=True, on_delete=models.CASCADE)
 
     objects = UserManager()
 
@@ -60,6 +71,36 @@ class Item(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     objects = ItemManager()
+
+class Cart(models.Model):
+    total = models.DecimalField(max_digits=8, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+class CartItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, related_name="cart_items", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+class CreditCard(models.Model):
+    number = models.IntegerField()
+    security_code = models.IntegerField()
+    expiration_date = models.DateField()
+    first_name = models.CharField(max_length=45)
+    last_name = models.CharField(max_length=45)
+    address = models.ForeignKey(Address, related_name="card", on_delete = models.CASCADE)
+    user = models.ForeignKey(User, related_name="credit_cards", on_delete = models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+class Order(models.Model):
+    status = models.CharField(max_length=45)
+    cart = models.OneToOneField(Cart,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="orders", on_delete=models.CASCADE)
+    credit_card = models.ForeignKey(CreditCard, related_name="orders", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
         return str(self.title) + ": $" + str(self.price)

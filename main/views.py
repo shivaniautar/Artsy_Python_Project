@@ -176,7 +176,6 @@ def process_update_item(request, item_id):
     item.description = request.POST['description']
     item.price = request.POST['price']
     item.save()
-
     return redirect(f'/viewmasterpiece/{item_id}')
 
 def process_update_masterpiece_pic(request, item_id):
@@ -204,3 +203,6 @@ def process_delete(request, item_id):
     item = Item.objects.get(id= item_id)
     item.delete()
     return redirect ('/dashboard')
+
+def start(request):
+    return render(request,'start.html')

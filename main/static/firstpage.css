@@ -29,8 +29,7 @@ h1, h2{
 
 h3{
     text-align: center;
-    font-size: large;
-    color: aliceblue;
+    font-size: xx-large;
 }
 button{
     background-color: black;
@@ -86,8 +85,9 @@ color: blue;
 textarea:focus{
     background-color: teal;
     font-size: large;
-
 }
 
-
-
+#clicktoenter{
+    padding: 60px;
+    text-align: center;
+}
