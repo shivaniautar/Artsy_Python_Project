@@ -36,6 +36,20 @@ class ItemManager(models.Manager):
 
         return errors
 
+class AddressManager(models.Manager):
+    def validator(self, postData):
+        errors = {}
+        if len(postData['address'])<1:
+            errors['address'] = "Address cannot be blank!"
+        if len(postData['city'])<1:
+            errors['city'] = "City must be provided."
+        if len(postData['state'])<0:
+            errors['state'] = "State must be provided."
+        if len(postData['zipcode'])<0:
+            errors['zipcode'] = "Zipcode must be provided."
+
+        return errors
+
 class Address(models.Model):
     address = models.CharField(max_length=45)
     address2 = models.CharField(max_length=45)
@@ -44,6 +58,8 @@ class Address(models.Model):
     zipcode = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    objects = AddressManager()
 
 
 class User(models.Model):
