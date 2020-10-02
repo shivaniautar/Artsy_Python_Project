@@ -56,11 +56,11 @@
                 <tbody>
                     {% for item in cart.cart_items.all %}
                     <tr>
-                        <td><strong>{{item.item.image}}</strong></td>
+                        <td><strong><img src='/media/item_pic/{{item.item.image}}' width="200" height="200" style="border: 7px solid #555;"></strong></td>
                         <td><strong>{{item.item.title}}</strong></td>
                         <td><strong>{{item.item.description}}</strong></td>
                         <td><strong>{{item.item.creator.first_name}} {{item.item.creator.last_name}}</strong></td>
-                        <td><strong>{{item.item.Price}}</strong></td>
+                        <td><strong>${{item.item.price}}</strong></td>
                         <td><strong><a href="/remove_from_cart/{{item.id}}">Remove from cart</a></strong></td>
                     </tr>
                     {% endfor %}

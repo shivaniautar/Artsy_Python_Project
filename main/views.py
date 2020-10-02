@@ -215,32 +215,60 @@ def cart(request):
         cart = Cart.objects.create(total=0)
         request.session['cart_id']=cart.id
     context = {
-        'cart': Cart.objects.get(id=request.session['cart_id']),
+        'cart':Cart.objects.get(id=request.session['cart_id']),
         "user":User.objects.get(id = request.session['user_id']),
     }
     return render(request, 'cart.html', context)
 
-def refresh_cart_total(cart):
+def refresh_cart_total_add(cart):
     total = 0
     for item in cart.cart_items.all():
         total+= item.item.price
     cart.total = total
     cart.save()
 
-def remove_from_cart(request, item_id):
-    item = Item.objects.get(id=item_id)
-    cart = Cart.objects.get(id=request.session['cart_id'])
-    cart_item = CartItem.objects.create(item=item, cart=cart)
+# def refresh_cart_total_remove(cart):
+#     total = 0
+#     for item in cart.cart_items.all():
+#         total-= item.item.price
+#     cart.total = total
+#     cart.save()
 
-    refresh_cart_total(cart)
+# def remove_from_cart(request, item_id):
+#     item = Item.objects.get(id=item_id)
+#     cart = Cart.objects.get(id=request.session['cart_id'])
+#     # cart_item = CartItem.objects.get(item=item_id)
+#     cart.cart_items.remove(item)
 
-    return redirect('/cart')
+#     refresh_cart_total_remove(cart)
+
+#     return redirect('/cart')
 
 def add_to_cart(request, item_id):
     item = Item.objects.get(id=item_id)
     cart = Cart.objects.get(id=request.session['cart_id'])
     cart_item = CartItem.objects.create(item=item, cart=cart)
 
-    refresh_cart_total(cart)
+    refresh_cart_total_add(cart)
 
     return redirect('/cart')
+
+def checkout(request):
+    if 'cart_id' not in request.session:
+        return redirect("/")
+
+    cart = Cart.objects.get(id=request.session['cart_id'])
+
+    # Returns user to home is cart is empty.
+    if not cart.cart_items.exists():
+        return redirect("/")
+    if "user_id" not in request.session:
+        messages.error(request, "You must be logged in to view that page.")
+        return redirect('/')
+
+    context = {
+        'cart': Cart.objects.get(id=request.session['cart_id']),
+        "user":User.objects.get(id = request.session['user_id']),
+        "artists":User.objects.filter(usertype="Viewer/Seller")
+    }
+    return render(request,'checkout.html',context)
