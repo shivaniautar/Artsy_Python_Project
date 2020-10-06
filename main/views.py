@@ -267,6 +267,7 @@ def checkout_page(request):
 def process_checkout(request):
     if 'cart_id' not in request.session:
         return redirect("/")
+        
     errors = Address.objects.validator(request.POST)
     if len(errors)>0:
         for key, val in errors.items():
