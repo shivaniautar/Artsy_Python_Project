@@ -253,9 +253,25 @@ def add_to_cart(request, item_id):
 
     return redirect('/cart')
 
-def checkout(request):
+def checkout_page(request):
     if 'cart_id' not in request.session:
         return redirect("/")
+    context = {
+        'cart': Cart.objects.get(id=request.session['cart_id']),
+        "user":User.objects.get(id = request.session['user_id']),
+        "artists":User.objects.filter(usertype="Viewer/Seller")
+    }
+    return render(request,'checkout.html',context)
+
+
+def process_checkout(request):
+    if 'cart_id' not in request.session:
+        return redirect("/")
+    errors = Address.objects.validator(request.POST)
+    if len(errors)>0:
+        for key, val in errors.items():
+            messages.error(request, val)
+        return redirect('/')
 
     cart = Cart.objects.get(id=request.session['cart_id'])
 
@@ -266,9 +282,68 @@ def checkout(request):
         messages.error(request, "You must be logged in to view that page.")
         return redirect('/')
 
+        # Creates shipping address.
+    shipping_address = Address.objects.create(
+        address = request.POST['address'],
+        address2 = request.POST['address2'],
+        city = request.POST['city'],
+        state = request.POST['state'],
+        zipcode = request.POST['zipcode'],
+    )
+    # Creates new address and saves the billing first name and last name for credit card.
+    billing_address = Address.objects.create(
+        address = request.POST['cc_address'],
+        address2 = request.POST['cc_address2'],
+        city = request.POST['cc_city'],
+        state = request.POST['cc_state'],
+        zipcode = request.POST['cc_zipcode'],
+    )
+    # cc_first_name = request.POST['cc_first_name']
+    # cc_last_name = request.POST['cc_last_name']
+    
+    # Credit Card expiration date set as a datetime, where it's the first of the month of the MM/YYYY provided
+    expiration_date = datetime.date(int(request.POST['expireYYYY']),int(request.POST['expireM']),1)
+    # Creates the credit card.
+    credit_card = CreditCard.objects.create(
+        number = request.POST['cc_number'],
+        security_code = request.POST['cc_security_code'],
+        expiration_date = expiration_date,
+        # first_name = cc_first_name,
+        # last_name = cc_last_name,
+        address = billing_address,
+        user = User.objects.get(id = request.session['user_id']),
+    )
+    # Retrieves the cart from the session cart_id. Creates an Order object with it, the User, and Credit Card
+    cart = Cart.objects.get(id=request.session['cart_id'])
+    new_order = Order.objects.create(
+        status = "Processing",
+        cart = cart,
+        user = User.objects.get(id = request.session['user_id']),
+        credit_card = credit_card,
+    )
+
+    # Places order_id in session to retrieve for confirmation page.
+    request.session['order_id'] = new_order.id
+
+    # Removes cart from session. The next visit to the store page will create a new cart.
+    request.session.pop("cart_id")
+    return redirect('/confirmation')
+
+def confirmation_page(request):
+        # Retrieves order from session.
+    current_order = Order.objects.get(id = request.session['order_id'])
+
+    # Formats credit card number to just show last digits.
+    # This may be a security vulnerability. Not sure.
+    cc_last_digits = current_order.credit_card.number % 10000
+
+    # Because credit card expiration date is stored as a date with the first of the month,
+    # this reformats it as a MM/YY
+    cc_expiration_date = current_order.credit_card.expiration_date.strftime('%m/%y')
+
     context = {
-        'cart': Cart.objects.get(id=request.session['cart_id']),
-        "user":User.objects.get(id = request.session['user_id']),
-        "artists":User.objects.filter(usertype="Viewer/Seller")
+        'order': current_order,
+        'cc_last_digits': cc_last_digits,
+        'cc_expiration_date': cc_expiration_date
     }
-    return render(request,'checkout.html',context)
+    return render(request, "conf.html", context)

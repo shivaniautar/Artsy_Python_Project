@@ -50,6 +50,22 @@ class AddressManager(models.Manager):
 
         return errors
 
+class CreditCardManager(models.Manager):
+    def validator(self, postData):
+        errors = {}
+        if len(postData['number'])==16:
+            errors['number'] = "Credit card number must be 16 numbers long."
+        if len(postData['security_code'])==3:
+            errors['security_code'] = "Security code must be 3 numbers."
+        if len(postData['first_name'])<1:
+            errors['first_name'] = "First name must be provided."
+        if len(postData['last_name'])<1:
+            errors['last_name'] = "Last name must be provided."
+
+        return errors
+
+
+
 class Address(models.Model):
     address = models.CharField(max_length=45)
     address2 = models.CharField(max_length=45)
@@ -109,6 +125,8 @@ class CreditCard(models.Model):
     user = models.ForeignKey(User, related_name="credit_cards", on_delete = models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    objects = CreditCardManager()
 
 class Order(models.Model):
     status = models.CharField(max_length=45)
